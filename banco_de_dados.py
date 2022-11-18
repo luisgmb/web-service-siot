@@ -18,17 +18,18 @@ def cria_tabelas():
     Função gera as tabelas usadas para armazenar os dados da estufa de ar e da estufa de solo
     """
     try:
-        conn = connect_to_db()
+        conn = conecta_banco()
         conn.execute(
             """
             CREATE TABLE estufaAr (
-                registro_pk INTEGER PRIMARY KEY NOT NULL,
-                humidade_ar DECIMAL NOT NULL,
-                direcao TEXT NOT NULL,
-                pressao DECIMAL NOT NULL,
-                velocidade_do_vento DECIMAL NOT NULL,
-                temperatura_ar DECIMAL NOT NULL,
-                data_registro DATETIME NOT NULL
+                registro_pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                humidade_ar NOT NULL,
+                direcao NOT NULL,
+                pressao NOT NULL,
+                velocidade_do_vento NOT NULL,
+                temperatura_ar NOT NULL,
+                luminosidade NOT NULL,
+                data_registro NOT NULL
             );
         """
         )
@@ -36,10 +37,11 @@ def cria_tabelas():
         conn.execute(
             """
             CREATE TABLE estufaSolo (
-                registro_pk INTEGER PRIMARY KEY NOT NULL,
-                humidade_solo DECIMAL NOT NULL,
-                temperatura_solo DECIMAL NOT NULL,
-                data_registro DATETIME NOT NULL
+                registro_pk INTEGER PRIMARY KEY AUTOINCREMENT,
+                humidade_solo NOT NULL,
+                temperatura_solo NOT NULL,
+                status_bomba NOT NULL,
+                data_registro NOT NULL
             );
         """
         )
