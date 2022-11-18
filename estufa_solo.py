@@ -1,9 +1,20 @@
-import datetime
+from datetime import datetime
 import logging
 import sqlite3
 from banco_de_dados import conecta_banco
 
 logger = logging.getLogger(__name__)
+
+def formata_retorno_consulta(dado):
+    dados = {
+        "registro_pk": dado[0],
+        "humidade_solo": dado[1],
+        "temperatura_solo": dado[2],
+        "status_bomba": dado[3],
+        "data_registro": dado[4],  
+    }
+
+    return dados
 
 
 def setRegistroEstufaSolo(registro: dict = None):
@@ -21,15 +32,16 @@ def setRegistroEstufaSolo(registro: dict = None):
         cursor = conn.cursor()
         humidade_solo = registro.get("humidade_solo", None)
         temperatura_solo = registro.get("temperatura_solo", None)
+        status_bomba = registro.get("status_bomba", False)
         data_registro = datetime.now()
         cursor.execute(
-            "INSERT INTO estufaSolo (humidade_solo, temperatura_solo, data_registro)"
-            f" VALUES ({humidade_solo}, {temperatura_solo}, {data_registro})"
+            f"""INSERT INTO estufaSolo (humidade_solo, temperatura_solo, status_bomba,  data_registro) VALUES ({humidade_solo}, {temperatura_solo}, {status_bomba} ,'{data_registro}');"""
         )
         conn.commit()
         registro = getRegistroEstufaSolo(cursor.lastrowid)
-    except:
-        conn().rollback()
+    except Exception as erro:
+        logger.error(f"erro = {erro}")
+        conn.rollback()
 
     finally:
         conn.close()
@@ -48,16 +60,10 @@ def getRegistrosEstufaSolo():
     try:
         conn = conecta_banco()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM estufaSolo")
-        dados = cursor.fetchall()
-
+        exec = cursor.execute("SELECT * FROM estufaSolo")
+        dados = exec.fetchall()
         for dado in dados:
-            registro = {
-                "registro_pk": dado.get("registro_pk", None),
-                "humidade_solo": dado.get("humidade_solo", None),
-                "temperatura_solo": dado.get("temperatura_solo", None),
-                "data_registro": dado.get("data_registro", None),
-            }
+            registro = formata_retorno_consulta(dado)
             registros.append(registro)
 
     except Exception as erro:
@@ -87,16 +93,12 @@ def getRegistroEstufaSolo(registro_pk: int):
         conn = conecta_banco()
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        cursor.execute(f"SELECT * FROM estufaSolo WHERE registro_pk = {registro_pk}")
+        exec = cursor.execute(f"SELECT * FROM estufaSolo WHERE registro_pk = {registro_pk}")
 
-        dado = cursor.fetchone()
+        dado = exec.fetchone()
 
-        registro = {
-            "registro_pk": dado.get("registro_pk", None),
-            "humidade_solo": dado.get("humidade_solo", None),
-            "temperatura_solo": dado.get("temperatura_solo", None),
-            "data_registro": dado.get("data_registro", None),
-        }
+        registro = formata_retorno_consulta(dado)
+
 
     except Exception as erro:
         logger.error(f"Houver um erro ao consultar o registro {registro_pk}, erro: {erro}")

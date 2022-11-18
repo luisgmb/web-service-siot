@@ -1,9 +1,23 @@
-import datetime
+from datetime import datetime
 import logging
 import sqlite3
 from banco_de_dados import conecta_banco
 
 logger = logging.getLogger(__name__)
+
+def formata_retorno_consulta(dado):
+    dados = {
+        "registro_pk": dado[0],
+        "humidade_ar": dado[1],
+        "direcao": dado[2],
+        "pressao": dado[3],
+        "velocidade_vento": dado[4],  
+        "temperatura_ar": dado[5],  
+        "luminosidade": dado[6],  
+        "data_registro": dado[7],  
+    }
+
+    return dados
 
 
 def setRegistroEstufaAr(registro: dict = None):
@@ -24,15 +38,17 @@ def setRegistroEstufaAr(registro: dict = None):
         pressao = registro.get("pressao", None)
         velocidade_do_vento = registro.get("velocidade_do_vento", None)
         temperatura_ar = registro.get("temperatura_ar", None)
+        luminosidade = registro.get("luminosidade", None)
         data_registro = datetime.now()
         cursor.execute(
-            "INSERT INTO estufaAr (humidade_ar, direcao, pressao, velocidade_do_vento, temperatura_ar, data_registro)"
-            f" VALUES ({humidade_ar}, {direcao}, {pressao}, {velocidade_do_vento}, {temperatura_ar}, {data_registro})"
+            "INSERT INTO estufaAr (humidade_ar, direcao, pressao, velocidade_do_vento, temperatura_ar, luminosidade, data_registro)"
+            f" VALUES ({humidade_ar}, {direcao}, {pressao}, {velocidade_do_vento}, {temperatura_ar}, {luminosidade}, {data_registro})"
         )
         conn.commit()
         registro = getRegistroEstufaAr(cursor.lastrowid)
-    except:
-        conn().rollback()
+    except Exception as erro:
+        logger.error(f"erro = {erro}")
+        conn.rollback()
 
     finally:
         conn.close()
@@ -51,25 +67,15 @@ def getRegistrosEstufaAr():
     try:
         conn = conecta_banco()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM estufaAr")
-        dados = cursor.fetchall()
-
+        exec = cursor.execute("SELECT * FROM estufaAr")
+        dados = exec.fetchall()
         for dado in dados:
-            registro = {
-                "registro_pk": dado.get("registro_pk", None),
-                "humidade_ar": dado.get("humidade_ar", None),
-                "direcao": dado.get("direcao", None),
-                "pressao": dado.get("pressao", None),
-                "velocidade_do_vento": dado.get("velocidade_do_vento", None),
-                "temperatura_ar": dado.get("temperatura_ar", None),
-                "data_registro": dado.get("data_registro", None),
-            }
+            registro = formata_retorno_consulta(dado)
             registros.append(registro)
 
     except Exception as erro:
         logger.error(f"Houver um erro ao consultar os registros, erro: {erro}")
         registros = []
-    
 
     finally:
         conn.close()
@@ -94,19 +100,12 @@ def getRegistroEstufaAr(registro_pk: int):
         conn = conecta_banco()
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        cursor.execute(f"SELECT * FROM estufaAr WHERE registro_pk = {registro_pk}")
+        exec = cursor.execute(f"SELECT * FROM estufaAr WHERE registro_pk = {registro_pk}")
 
-        dado = cursor.fetchone()
+        dado = exec.fetchone()
 
-        registro = {
-            "registro_pk": dado.get("registro_pk", None),
-            "humidade_ar": dado.get("humidade_ar", None),
-            "direcao": dado.get("direcao", None),
-            "pressao": dado.get("pressao", None),
-            "velocidade_do_vento": dado.get("velocidade_do_vento", None),
-            "temperatura_ar": dado.get("temperatura_ar", None),
-            "data_registro": dado.get("data_registro", None),
-        }
+        registro = formata_retorno_consulta(dado)
+
 
     except Exception as erro:
         logger.error(f"Houver um erro ao consultar o registro {registro_pk}, erro: {erro}")
@@ -132,16 +131,15 @@ def atualizaRegistroEstufaAr(registro: dict, registro_pk: int):
         conn = conecta_banco()
         cursor = conn.cursor()
 
-        humidade_ar = registro.get("humidade_ar", None)
-        direcao = registro.get("direcao", None)
-        pressao = registro.get("pressao", None)
-        velocidade_do_vento = registro.get("velocidade_do_vento", None)
-        temperatura_ar = registro.get("temperatura_ar", None)
+        if not registro_pk:
+            raise Exception("É necessário informar o id do registro")
+
+        humidade_solo = registro.get("humidade_solo", None)
+        temperatura_solo = registro.get("temperatura_solo", None)
         data_registro = datetime.now()
 
         cursor.execute(
-            f"SELECT estufaAr SET humidade_ar = {humidade_ar}, direcao = {direcao}, pressao={pressao},"
-            f" velocidade_do_vento = {velocidade_do_vento}, temperatura_ar ={temperatura_ar},"
+            f"SELECT estufaAr SET humidade_solo = {humidade_solo}, temperatura_solo ={temperatura_solo},"
             f" data_registro={data_registro} WHERE registro_pk={registro_pk}"
         )
 
@@ -166,7 +164,7 @@ def removeRegistroEstufaAr(registro_pk: int):
         registro_pk (int): ID do registro a ser removido
 
     Returns:
-        tupla: 
+        tupla:
             status (boolean): Status da remoção
             mensagem (string): Mensagem informando resultado da remoção
     """
