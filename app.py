@@ -25,15 +25,6 @@ class apiEstufaAr():
      def getEstufaAr(registro_pk):
         return jsonify(getRegistroEstufaAr(registro_pk))
 
-     @app.route("/estufa-ar/update", methods=["PUT"])
-     def updateEstufaAr():
-        registro = request.get_json()
-        return jsonify(atualizaRegistroEstufaAr(registro))
-
-     @app.route("/estufa-ar/delete/<registro_pk>", methods=["DELETE"])
-     def deleteEstufaAr(registro_pk):
-        return jsonify(removeRegistroEstufaAr(registro_pk))
-
 class apiEstufaSolo():
 
      @app.route("/estufa-solo/add", methods=["POST"])
@@ -50,15 +41,4 @@ class apiEstufaSolo():
      @app.route("/estufa-solo/<registro_pk>", methods=["GET"])
      def getEstufaSolo(registro_pk):
         return jsonify(getRegistroEstufaSolo(registro_pk))
-
-     @app.route("/estufa-solo/update", methods=["PUT"])
-     def updateEstufaSolo():
-        registro = request.get_json()
-        return jsonify(atualizaRegistroEstufaSolo(registro))
-
-     @app.route("/estufa-solo/delete/<registro_pk>", methods=["DELETE"])
-     def deleteEstufaSolo(registro_pk):
-        return jsonify(removeRegistroEstufaSolo(registro_pk))
-
-
 
