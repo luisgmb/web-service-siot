@@ -6,3 +6,8 @@ Bibliotecas necessárias para o funcionamento
 pip install flask
 
 pip install db-sqlite3
+
+pip install ploty
+
+pip install pandas
+
