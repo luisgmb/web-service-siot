@@ -1,11 +1,11 @@
-from flask import Flask, request, jsonify
 import json
 import logging
 
+from flask import Flask, jsonify, request
 
+from banco_de_dados import *
 from estufa_ar import *
 from estufa_solo import *
-from banco_de_dados import *
 
 app = Flask(__name__)
 logger = logging.getLogger(__name__)

@@ -7,7 +7,7 @@ pip install flask
 
 pip install db-sqlite3
 
-pip install ploty
+pip install plotly
 
 pip install pandas
 

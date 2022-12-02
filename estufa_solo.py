@@ -1,6 +1,7 @@
-from datetime import datetime
 import logging
 import sqlite3
+from datetime import datetime
+
 from banco_de_dados import conecta_banco
 
 logger = logging.getLogger(__name__)
