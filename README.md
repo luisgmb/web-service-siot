@@ -11,3 +11,4 @@ pip install plotly
 
 pip install pandas
 
+pip install pyserial

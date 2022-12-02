@@ -13,7 +13,7 @@ import serial
 
 send = serial.Serial(
 
-    port='/dev/serial0',
+    port='/dev/ttyAMA0',
 
     baudrate = 9600,
 
@@ -34,7 +34,7 @@ while True:
 
  for x in i:
 
-     send.write(str(x))
+     send.write(x)
 
      print(x)
 
