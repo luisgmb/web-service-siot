@@ -1,14 +1,14 @@
 import time
 from time import sleep
 
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import serial
 
-# GPIO.setwarnings(False)
+GPIO.setwarnings(False)
 
-# GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BOARD)
 
-# GPIO.setup(7, GPIO.OUT, initial=GPIO.HIGH)
+GPIO.setup(1, GPIO.OUT, initial=GPIO.HIGH)
 
 
 send = serial.Serial(
