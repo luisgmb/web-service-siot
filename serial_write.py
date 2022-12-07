@@ -1,14 +1,14 @@
 import time
 from time import sleep
 
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 import serial
 
-GPIO.setwarnings(False)
+# GPIO.setwarnings(False)
 
-GPIO.setmode(GPIO.BOARD)
+# GPIO.setmode(GPIO.BOARD)
 
-GPIO.setup(1, GPIO.OUT, initial=GPIO.HIGH)
+# GPIO.setup(1, GPIO.OUT, initial=GPIO.HIGH)
 
 
 send = serial.Serial(
@@ -28,14 +28,13 @@ send = serial.Serial(
 )
 
 
-i = [0,10,45,90,135,180,135,90,45,10,0]
+comunicaSolo = bytearray.fromhex('1C 03 01 21 05')
+comunicaAr = bytearray.fromhex('1C 02 01 21 05')
 
 while True:
 
- for x in i:
+ send.write(comunicaSolo)
 
-     send.write(x)
+ print(comunicaSolo)
 
-     print(x)
-
-     time.sleep(1.5)
+ time.sleep(1.5)
