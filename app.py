@@ -29,13 +29,11 @@ class apiEstufaSolo():
 
      @app.route("/estufa-solo/add", methods=["POST"])
      def postEstufaSolo():
-        logger.info("entra aqui 1")
         registro = request.get_json()
         return jsonify(setRegistroEstufaSolo(registro))
 
      @app.route("/estufa-solo", methods=["GET"])
      def getEstufasSolo():
-        logger.info("entra aqui 2")
         return jsonify(getRegistrosEstufaSolo())
 
      @app.route("/estufa-solo/<registro_pk>", methods=["GET"])
