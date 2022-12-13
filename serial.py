@@ -8,17 +8,6 @@ import serial
 
 logger = logging.getLogger(__name__)
 
-GPIO.setwarnings(False)
-
-GPIO.setmode(GPIO.BOARD)
-
-GPIO.setup(12, GPIO.OUT)
-
-count = 1
-comunica_solo = bytearray.fromhex("1C 03 01 21 05")
-comunica_ar = bytearray.fromhex("1C 02 01 21 05")
-
-
 def faz_requisicao(dados, url):
     resposta = requests.post(url=url, json=dados)
     if resposta.status_code == 200:
@@ -30,10 +19,17 @@ def faz_requisicao(dados, url):
 def leitura_dados_sensores(sensor):
     dados = {}
     GPIO.output(12, GPIO.LOW)
+
+    # dados_sensor = []
+    # while True:
+    #     if ser.in_waiting():
+    #         dados_sensor = ser.readline().decode('utf')
+
     dados_sensor = ser.read(1)
     if dados_sensor:
         dados_sensor += ser.read_until(b"\x05")
         if sensor == comunica_solo:
+            list(dados)
             dados.update(
                 {
                     "temperatura_ar": dados_sensor[4],
@@ -62,6 +58,16 @@ def informa_sensor(sensor):
     sleep(1)
     leitura_dados_sensores(sensor)
 
+GPIO.setwarnings(False)
+
+GPIO.setmode(GPIO.BOARD)
+
+GPIO.setup(12, GPIO.OUT)
+
+count = 1
+comunica_solo = bytearray.fromhex("1C 03 01 21 05")
+comunica_ar = bytearray.fromhex("1C 02 01 21 05")
+
 
 with serial.Serial(
     port="/dev/ttyAMA0",
@@ -78,5 +84,8 @@ with serial.Serial(
     while count != None:
         if count == 1:
             informa_sensor(comunica_ar)
+            count+=1
         else:
             informa_sensor(comunica_solo)
+            count-=1
+
