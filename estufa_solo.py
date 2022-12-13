@@ -6,13 +6,14 @@ from banco_de_dados import conecta_banco
 
 logger = logging.getLogger(__name__)
 
+
 def formata_retorno_consulta(dado):
     dados = {
         "registro_pk": dado[0],
-        "humidade_solo": dado[1],
+        "umidade_solo": dado[1],
         "temperatura_solo": dado[2],
         "status_bomba": dado[3],
-        "data_registro": dado[4],  
+        "data_registro": dado[4],
     }
 
     return dados
@@ -31,12 +32,12 @@ def setRegistroEstufaSolo(registro: dict = None):
     try:
         conn = conecta_banco()
         cursor = conn.cursor()
-        humidade_solo = registro.get("humidade_solo", None)
+        umidade_solo = registro.get("umidade_solo", None)
         temperatura_solo = registro.get("temperatura_solo", None)
         status_bomba = registro.get("status_bomba", False)
         data_registro = datetime.now()
         cursor.execute(
-            f"""INSERT INTO estufaSolo (humidade_solo, temperatura_solo, status_bomba,  data_registro) VALUES ({humidade_solo}, {temperatura_solo}, {status_bomba} ,'{data_registro}');"""
+            f"""INSERT INTO estufaSolo (umidade_solo, temperatura_solo, status_bomba,  data_registro) VALUES ({umidade_solo}, {temperatura_solo}, {status_bomba} ,'{data_registro}');"""
         )
         conn.commit()
         registro = getRegistroEstufaSolo(cursor.lastrowid)
@@ -99,7 +100,6 @@ def getRegistroEstufaSolo(registro_pk: int):
         dado = exec.fetchone()
 
         registro = formata_retorno_consulta(dado)
-
 
     except Exception as erro:
         logger.error(f"Houver um erro ao consultar o registro {registro_pk}, erro: {erro}")

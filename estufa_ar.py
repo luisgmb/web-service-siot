@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 def formata_retorno_consulta(dado):
     dados = {
         "registro_pk": dado[0],
-        "humidade_ar": dado[1],
+        "umidade_ar": dado[1],
         "direcao": dado[2],
         "pressao": dado[3],
         "velocidade_vento": dado[4],  
@@ -34,7 +34,7 @@ def setRegistroEstufaAr(registro: dict = None):
     try:
         conn = conecta_banco()
         cursor = conn.cursor()
-        humidade_ar = registro.get("humidade_ar", None)
+        umidade_ar = registro.get("umidade_ar", None)
         direcao_ar = registro.get("direcao", None)
         print(f'Direcao = {direcao_ar}')
         pressao = registro.get("pressao", None)
@@ -43,8 +43,8 @@ def setRegistroEstufaAr(registro: dict = None):
         luminosidade = registro.get("luminosidade", None)
         data_registro = datetime.now()
         cursor.execute(
-            "INSERT INTO estufaAr (humidade_ar, direcao, pressao, velocidade_do_vento, temperatura_ar, luminosidade, data_registro)"
-            f" VALUES ({humidade_ar}, '{direcao_ar}', {pressao}, {velocidade_do_vento}, {temperatura_ar}, {luminosidade}, '{data_registro}')"
+            "INSERT INTO estufaAr (umidade_ar, direcao, pressao, velocidade_do_vento, temperatura_ar, luminosidade, data_registro)"
+            f" VALUES ({umidade_ar}, '{direcao_ar}', {pressao}, {velocidade_do_vento}, {temperatura_ar}, {luminosidade}, '{data_registro}')"
         )
         conn.commit()
         registro = getRegistroEstufaAr(cursor.lastrowid)
